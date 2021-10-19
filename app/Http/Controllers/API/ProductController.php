@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Else_;
 
 class ProductController extends Controller
 {
@@ -21,7 +23,53 @@ class ProductController extends Controller
 
         if($id){
             $product = Product::with(['category','galleries'])->find($id);
-            
+           if($product){
+               return ResponseFormatter::success(
+                   $product,
+                   'Data Product berhasil diambil'
+               );
+           } 
+           else{
+               return ResponseFormatter::error(
+                   $product,
+                   'Data Product tidak ada',
+                    404
+                );
+           } 
         }
+
+
+        $product = Product::with(['category', 'galleries']);
+
+
+        if($name){
+            $product->where(
+                'name', 'like' , '%' . $name . '%'
+            );        
+        }
+        if($description){
+            $product->where(
+                'desdescription', 'like' , '%' . $description . '%'
+            );        
+        }
+        if($tags){
+            $product->where(
+                '$tags', 'like' , '%' . $tags . '%'
+            );        
+        }
+        if($price_form){
+            $product->where('price', '>=' , $price_form);
+        }
+        if($price_to){
+            $product->where('price', '<=' , $price_to);
+        }
+        if($categories){
+            $product->where('categories', $categories);
+        }
+        return ResponseFormatter::success(
+            $product->paginate($limit), 'Data Berhasil diambil'
+        );
+        
+
     }
 }
