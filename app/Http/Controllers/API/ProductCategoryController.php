@@ -16,7 +16,7 @@ class ProductCategoryController extends Controller
         $show_product = $request->input('show_product');
 
         if($id){
-            $category = ProductCategory::with(['product'])->find($id);
+            $category = ProductCategory::find($id);
            if($category){
                return ResponseFormatter::success(
                    $category,
@@ -46,7 +46,53 @@ class ProductCategoryController extends Controller
 
         return ResponseFormatter::success(
             $category->paginate($limit), 'Data list Kategori Berhasil diambil'
+        
         );
 
     }
+
+    public function createdata(Request $request){
+        $create = ProductCategory::create([
+            'name' => $request->name
+        ]);
+
+        return ResponseFormatter::success(
+            $create,
+            'Data Kategori berhasil dibuat'
+        );
+    }
+    public function updatedata(Request $request, $id){
+
+        $update = ProductCategory::where('id',$id)->first();
+
+        $update->update([
+            'name' => $request->name
+        ]);
+
+
+        return ResponseFormatter::success(
+            '',
+            'Data Kategori berhasil diupdate'
+        );
+    }
+
+    public function deletedata($id){
+
+        $delete = ProductCategory::where('id',$id)->first();
+        
+        if(!$delete){
+            return ResponseFormatter::error(
+                '',
+                'Data Kategori tidak ada',
+                 401
+             );
+        }
+        $delete->delete();
+
+        return ResponseFormatter::success(
+            '',
+            'Data Kategori berhasil dihapus'
+        );
+    }
+    
 }

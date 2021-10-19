@@ -22,7 +22,7 @@ class ProductController extends Controller
 
 
         if($id){
-            $product = Product::with(['category','galleries'])->find($id);
+            $product = Product::find($id); //belom relasi
            if($product){
                return ResponseFormatter::success(
                    $product,
@@ -39,7 +39,7 @@ class ProductController extends Controller
         }
 
 
-        $product = Product::with(['category', 'galleries']);
+        $product = Product::query();
 
 
         if($name){
